@@ -1,0 +1,29 @@
+# Git and GitHub metadata
+.git/
+.github/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE configurations
+.vscode/
+.idea/
+
+# Testing and development files
+tests/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+*.log

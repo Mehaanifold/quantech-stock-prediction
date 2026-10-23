@@ -1,26 +1,29 @@
 # 📈 Quantech: Stock Analytics & Forecasting Dashboard
 
-A lightweight, interactive stock price analytics and illustrative forecasting web application built with **Python** and **Streamlit**. 
+A lightweight, interactive stock price analytics and illustrative forecasting web application built with **Python**, **Streamlit**, and **Docker**.
 
-Developed as part of **Agile Assignment No. 1 (Semester V, TE Data Science)** to demonstrate **LO2 (Source Code Management using Git and GitHub)**.
+Developed for **Agile Assignment No. 1 (Semester V, TE Data Science)** covering:
+- **LO2:** Source Code Management using Git and GitHub.
+- **LO3:** Automated CI/CD Pipeline using GitHub Actions, Pytest, Container Packaging (GHCR), and Cloud Deployment.
 
 ---
 
 ## 📌 Project Overview
 
-Quantech provides an intuitive dashboard for inspecting historical stock market price series and visualizing short-term mathematical trend projections using deterministic, hardcoded sample datasets.
+Quantech provides an intuitive web platform for inspecting historical stock market price series and visualizing short-term mathematical trend projections using deterministic, hardcoded sample datasets.
 
 ### ✨ Key Features
-- **Hardcoded Historical Dataset:** Pre-configured 50-day daily OHLCV trading data for prominent Indian equities:
+- **Hardcoded Historical Dataset:** Pre-configured 50-day daily OHLCV trading data for Indian equities:
   - `RELIANCE` (Reliance Industries Ltd. — Energy & Telecom)
   - `TCS` (Tata Consultancy Services Ltd. — IT)
   - `INFY` (Infosys Ltd. — IT)
   - `HDFCBANK` (HDFC Bank Ltd. — Banking & Finance)
-- **Interactive Price Charting:** Dynamic multi-layered charts using Altair with tooltip inspection, zooming, and panning.
-- **Technical Indicators:** Rolling Simple Moving Averages (**SMA-7** and **SMA-14**) to observe short- and medium-term momentum.
-- **Mathematical Forecasting Model:** Transparent Ordinary Least Squares (**OLS**) linear trend projection ($y = mx + c$) with residual standard error bands for customizable forecast horizons (3 to 14 days).
-- **Data Export:** Instant CSV export capability for offline data analysis.
-- **Educational Disclaimer:** Prominent notice highlighting the academic and illustrative nature of the predictions.
+- **Interactive Price Charting:** Dynamic multi-layered charts using Altair with tooltips, zooming, and panning.
+- **Technical Indicators:** Rolling Simple Moving Averages (**SMA-7** and **SMA-14**) to track momentum.
+- **Mathematical Forecasting Model:** Ordinary Least Squares (**OLS**) linear trend projection ($y = mx + c$) with residual standard error bands for customizable forecast horizons (3 to 14 days).
+- **Automated Testing Suite:** 14 automated unit and integration tests with `pytest`.
+- **Automated CI/CD Pipeline:** Multi-stage GitHub Actions workflow building, testing, linting, packaging into Docker, and publishing to GitHub Container Registry (GHCR).
+- **Educational Disclaimer:** Clear notice explaining that predictions are illustrative for academic demonstration and not financial advice.
 
 ---
 
@@ -28,38 +31,48 @@ Quantech provides an intuitive dashboard for inspecting historical stock market 
 
 - **Language:** Python 3.10+ (tested on Python 3.12)
 - **Web Framework:** [Streamlit](https://streamlit.io/) (v1.30+)
-- **Data Processing:** [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/)
-- **Visualization:** [Altair](https://altair-viz.github.io/) (interactive declarative charting)
-- **Version Control:** Git & GitHub
+- **Data & Math:** [Pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/)
+- **Visualization:** [Altair](https://altair-viz.github.io/)
+- **Testing:** [Pytest](https://pytest.org/), [Pytest-Cov](https://pytest-cov.readthedocs.io/)
+- **Containerization:** [Docker](https://www.docker.com/) (Debian-slim base)
+- **CI/CD Pipeline:** [GitHub Actions](https://github.com/features/actions)
+- **Artifact Registry:** [GitHub Container Registry (GHCR)](https://ghcr.io)
+- **Live Deployment Platform:** [Streamlit Community Cloud](https://share.streamlit.io/)
 
 ### Project Structure
 ```text
 stock-prediction-app/
-├── .gitignore              # Ignores venv, caches, IDE configs, secrets
-├── requirements.txt        # Python dependency manifest
-├── README.md               # Project documentation and setup guide
-├── app.py                  # Main Streamlit web application & UI layout
-├── stock_data.py           # Hardcoded sample stock datasets & metrics
-└── prediction.py           # Mathematical forecasting engine (OLS & SMA)
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml           # GitHub Actions automated CI/CD pipeline
+├── tests/
+│   └── test_app.py             # 14 automated unit & integration tests
+├── .dockerignore               # Files excluded from container image
+├── .gitignore                  # Files excluded from Git tracking
+├── Dockerfile                  # Container definition with health check
+├── requirements.txt            # Python dependencies (Streamlit, Pytest, Pandas)
+├── README.md                   # Complete documentation
+├── app.py                      # Main Streamlit web application & UI
+├── stock_data.py               # Hardcoded datasets and summary metrics
+└── prediction.py               # OLS trend extrapolation and SMA models
 ```
 
 ---
 
-## ⚙️ Installation & Setup Instructions
+## ⚙️ Local Setup & Installation
 
 ### 1. Prerequisites
-Ensure you have Python 3.10 or higher installed. Check using:
-```bash
-python --version
+- Python 3.10 or higher
+- Git
+- (Optional) Docker Desktop
+
+### 2. Navigate to Repository
+```powershell
+cd c:\Quantech\stock-prediction-app
 ```
 
-### 2. Clone / Navigate to the Repository
-```bash
-cd stock-prediction-app
-```
-
-### 3. (Recommended) Create and Activate a Virtual Environment
-- **Windows (Command Prompt / PowerShell):**
+### 3. Create & Activate Virtual Environment
+- **Windows (PowerShell):**
   ```powershell
   python -m venv .venv
   .venv\Scripts\Activate.ps1
@@ -77,84 +90,115 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Running the Application
+## 🧪 Running Automated Tests
 
-Launch the Streamlit web dashboard with:
+Run the complete test suite locally using `pytest`:
+
 ```bash
-streamlit run app.py
+# Run tests with verbose output
+python -m pytest -v
+
+# Run tests with execution durations
+python -m pytest -v --durations=10
 ```
 
-Once started, the application will automatically open in your default web browser at:
+### What the test suite verifies:
+- `test_module_imports`: Core modules (`stock_data`, `prediction`) import cleanly.
+- `test_available_tickers` & `test_stock_metadata`: Datasets, tickers, and metadata integrity.
+- `test_stock_data_shape_and_columns`: OHLCV columns present, High $\ge$ Low, positive prices.
+- `test_stock_data_invalid_ticker`: Graceful `ValueError` on nonexistent stock symbols.
+- `test_compute_moving_averages`: Calculation of 7-day and 14-day rolling moving averages.
+- `test_prediction_output_structure_and_shape`: Invariance of output lengths ($N + \text{horizon}$).
+- `test_prediction_numerical_invariants`: Error bounds validity ($\text{Upper} \ge \text{Price} \ge \text{Lower}$).
+- `test_prediction_known_linear_input`: Verifies OLS math on deterministic line $y = 2x + 10$.
+- `test_prediction_empty_or_too_small_dataframe`: Error handling on empty inputs.
+- `test_disclaimer_text`: Presence of mandatory academic and regulatory disclaimer.
+
+---
+
+## 🚀 Running the Web Application Locally
+
+Launch the Streamlit web dashboard:
+```powershell
+python -m streamlit run app.py
 ```
-http://localhost:8501
+Open your browser at `http://localhost:8501`.
+
+---
+
+## 🐳 Container Packaging with Docker
+
+### 1. Build the Docker Image
+```bash
+docker build -t quantech-stock-prediction:latest .
+```
+
+### 2. Run the Container
+```bash
+docker run -d -p 8501:8501 --name quantech-app quantech-stock-prediction:latest
+```
+Access the application at `http://localhost:8501`.
+
+### 3. Verify Container Health
+```bash
+curl http://localhost:8501/_stcore/health
 ```
 
 ---
 
-## 🌿 Git Branching Strategy & Workflow
+## 🔄 GitHub Actions CI/CD Pipeline
 
-This project strictly follows feature branching to satisfy **LO2** requirements:
+The automated pipeline is defined in [`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml) and triggers automatically on:
+- Every **push** to the `main` branch.
+- Every **pull request** targeting `main`.
 
-| Branch Name | Purpose | Merged Into |
+### Pipeline Stages
+
+| Stage | Job Name | Runs On | Description |
+|---|---|---|---|
+| **1. CI** | `ci-build-and-test` | PR & Push | Sets up Python 3.12, installs dependencies, runs syntax/compilation checks (`py_compile`), executes 14 `pytest` tests, and validates Docker container buildability. |
+| **2. CD** | `cd-package-and-publish` | Push to `main` only | Logs into GitHub Container Registry (`ghcr.io`) using `GITHUB_TOKEN`, tags the image with `:latest` and `:sha-<commit>`, and publishes the production image to GHCR. |
+| **3. Deploy** | `cd-deploy-trigger` | Push to `main` only | Signals the deployment webhook (e.g. Render / Cloud hook) or triggers continuous deployment on Streamlit Community Cloud. |
+
+### Pulling the Published Container Image from GHCR
+Once published by the pipeline:
+```bash
+docker pull ghcr.io/<YOUR_GITHUB_USERNAME>/quantech-stock-prediction:latest
+docker run -d -p 8501:8501 ghcr.io/<YOUR_GITHUB_USERNAME>/quantech-stock-prediction:latest
+```
+
+---
+
+## 🌐 Live Application Deployment (Streamlit Community Cloud)
+
+Streamlit Community Cloud offers zero-configuration continuous deployment natively integrated with GitHub:
+
+### Setup Steps:
+1. Go to **[share.streamlit.io](https://share.streamlit.io)** and log in with your GitHub account.
+2. Click **New app**.
+3. Select your repository: `Mehaanifold/quantech-stock-prediction`.
+4. Set **Branch**: `main`.
+5. Set **Main file path**: `app.py`.
+6. Click **Deploy!**
+
+### How Continuous Deployment Works:
+Whenever a new commit or feature is merged and pushed to `main`, Streamlit Community Cloud automatically detects the push, pulls the latest code, installs dependencies from `requirements.txt`, and redeploys the live application seamlessly without downtime.
+
+---
+
+## 📸 Screenshots to Capture for Your Practical Journal (Q3)
+
+| # | Screenshot Target | What to Show |
 |---|---|---|
-| `main` | Production-ready, stable baseline application code | — |
-| `feature/stock-dashboard` | Initial dataset structure, metrics, and Streamlit price dashboard | `main` |
-| `feature/prediction-model` | OLS linear trend prediction engine, SMA indicators, and disclaimer | `main` |
-| `feature/documentation` | Comprehensive README, project guides, and Git workflow docs | `main` |
-
-### Git Workflow Commands Used:
-```bash
-# Initialize and configure repository
-git init -b main
-git config user.name "Your Name"
-git config user.email "your.email@example.com"
-
-# Feature 1: Stock Dashboard
-git switch -c feature/stock-dashboard
-git add stock_data.py app.py
-git commit -m "feat(dashboard): implement stock dataset module and Streamlit historical price dashboard"
-git switch main
-git merge --no-ff feature/stock-dashboard -m "merge: integrate feature/stock-dashboard into main"
-
-# Feature 2: Prediction Model
-git switch -c feature/prediction-model
-git add prediction.py app.py
-git commit -m "feat(prediction): implement mathematical trend projection model and educational disclaimer"
-git switch main
-git merge --no-ff feature/prediction-model -m "merge: integrate feature/prediction-model into main"
-
-# Feature 3: Documentation
-git switch -c feature/documentation
-git add README.md
-git commit -m "docs: add comprehensive README with setup guide, Git workflow, and architecture"
-git switch main
-git merge --no-ff feature/documentation -m "merge: integrate feature/documentation into main"
-```
-
----
-
-## 📐 Mathematical Methodology
-
-### 1. Simple Moving Average (SMA)
-For a time series of closing prices $P_t$, the $k$-day moving average is:
-$$\text{SMA}_k(t) = \frac{1}{k} \sum_{i=0}^{k-1} P_{t-i}$$
-Both **SMA-7** (weekly momentum) and **SMA-14** (bi-weekly trend) are calculated to identify moving trends.
-
-### 2. Linear Trend Extrapolation
-Given $n$ historical closing prices with discrete time indices $x_i \in \{0, 1, \dots, n-1\}$ and prices $y_i$:
-$$y = m \cdot x + c$$
-Where slope $m$ and intercept $c$ are solved via Ordinary Least Squares:
-$$m = \frac{n \sum (x_i y_i) - \sum x_i \sum y_i}{n \sum x_i^2 - (\sum x_i)^2}$$
-$$c = \frac{\sum y_i - m \sum x_i}{n}$$
-Future days $x_f \in \{n, n+1, \dots, n+H-1\}$ are projected as $\hat{y}_f = m \cdot x_f + c$.
-
-### 3. Illustrative Confidence Bands
-Residual standard deviation $\sigma_\epsilon = \sqrt{\frac{1}{n} \sum (y_i - \hat{y}_i)^2}$ yields an illustrative 95% interval:
-$$\text{Bounds} = \hat{y}_f \pm 1.96 \cdot \sigma_\epsilon$$
+| **1** | Terminal — `pytest -v` | All 14 automated tests passing in under 1 second. |
+| **2** | Terminal — `docker build` & `docker run` | Container building cleanly and responding to health check on port 8501. |
+| **3** | GitHub — **Actions** Tab | Workflow run showing green checkmarks for `ci-build-and-test`, `cd-package-and-publish`, and `cd-deploy-trigger`. |
+| **4** | GitHub — **Packages** Page | The published container image on GitHub Container Registry with tags `:latest` and `:sha-xxxxxxx`. |
+| **5** | Streamlit Community Cloud | Live running application URL with interactive charts and prediction sliders. |
 
 ---
 
 ## ⚠️ Academic & Regulatory Disclaimer
 
 > **IMPORTANT NOTICE:**  
-> This application is strictly an **educational tool** developed for practical demonstration in **Agile Assignment No. 1**. The datasets, formulas, and price projections are illustrative mathematical approximations and do **not** reflect real-time financial market movements or live exchange feeds. Nothing in this application constitutes financial, investment, or legal advice.
+> This application is strictly an **educational tool** developed for practical demonstration in **Agile Assignment No. 1 (Semester V, TE Data Science)**. All stock price datasets and linear projections are hardcoded/mathematical approximations and do **not** reflect real-time financial market movements. This is **NOT financial advice**.

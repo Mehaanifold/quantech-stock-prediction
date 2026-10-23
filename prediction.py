@@ -33,6 +33,13 @@ def forecast_linear_trend(df: pd.DataFrame, forecast_days: int = 7) -> tuple[pd.
         forecast_df: DataFrame with historical + projected points with upper/lower bounds.
         metrics: Dictionary containing slope, predicted price, expected change %, signal.
     """
+    if df is None or len(df) < 2:
+        raise ValueError("Historical DataFrame must contain at least 2 rows for trend analysis.")
+    if "Close" not in df.columns or "Date" not in df.columns:
+        raise ValueError("DataFrame must contain 'Date' and 'Close' columns.")
+    if forecast_days < 1:
+        raise ValueError("forecast_days must be a positive integer greater than or equal to 1.")
+
     df = df.copy().reset_index(drop=True)
     n = len(df)
     
