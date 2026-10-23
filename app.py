@@ -194,10 +194,10 @@ with tab_forecast:
     
     with c_right:
         st.markdown("#### 📐 Model Parameters")
-        st.write(f"- **Method:** Ordinary Least Squares ($y = mx + c$)")
-        st.write(f"- **Trend Slope ($m$):** `₹{pred_metrics['slope']}/day`")
-        st.write(f"- **Intercept ($c$):** `₹{pred_metrics['intercept']}`")
-        st.write(f"- **Residual Std ($\sigma$):** `₹{pred_metrics['residual_std']}`")
+        st.write(rf"- **Method:** Ordinary Least Squares ($y = mx + c$)")
+        st.write(rf"- **Trend Slope ($m$):** `₹{pred_metrics['slope']}/day`")
+        st.write(rf"- **Intercept ($c$):** `₹{pred_metrics['intercept']}`")
+        st.write(rf"- **Residual Std ($\sigma$):** `₹{pred_metrics['residual_std']}`")
         st.write(f"- **Target Price:** `₹{pred_metrics['target_price']}`")
         st.write(f"- **Expected Return:** `{pred_metrics['expected_change_pct']}%`")
         
