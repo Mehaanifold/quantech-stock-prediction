@@ -12,9 +12,14 @@ Tests verify:
 """
 
 from datetime import datetime, timedelta
+import os
+import sys
 import pytest
 import pandas as pd
 import numpy as np
+
+# Ensure repository root is on sys.path for test discovery in CI environments
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Core module imports
 import stock_data
